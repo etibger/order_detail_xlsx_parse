@@ -87,3 +87,5 @@ ENV/
 
 # Rope project settings
 .ropeproject
+/test/Nike_order_details_727856184_20170103.xlsx
+/test/SP17_Motherfile_CLOTHES.xlsx
