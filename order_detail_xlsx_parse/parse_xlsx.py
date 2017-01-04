@@ -74,30 +74,31 @@ class get_order_detail():
 
 def write_xlsx(orders):
     wb = Workbook()
-
     ws = wb.active
     for order in orders:
         ws.append(order.to_list())
     wb.save('../test/out.xlsx')
 
-def main():
-    wb = load_workbook(filename='../test/Nike_order_details_727856184_20170103.xlsx',
-                       read_only=True)
+def read_xlsx( item_class, filename):
+    wb = load_workbook(filename=filename, read_only=True)
     ws_names = wb.get_sheet_names()
     order_list = []
     for ws_name in ws_names:
         ws = wb[ws_name]
         i = j = 0
-        god = get_order_detail()
+        item_instance = item_class()
         for row in ws.rows:
-            tmp = god(row)
+            tmp = item_instance(row)
             if tmp:
-                print(i, end=': ')
                 order_list.append(tmp)
-                god = get_order_detail()
-                print(tmp)
-                i += 1
+                item_instance = item_class()
+    return order_list
+
+def main():
+    order_list = read_xlsx(get_order_detail,
+                           '../test/Nike_order_details_727856184_20170103.xlsx')
     write_xlsx(order_list)
+    print("Conversion Finished")
 
 main()
 
