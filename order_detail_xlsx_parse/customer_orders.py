@@ -101,26 +101,30 @@ def get_sheet_header(ws, ws_width):
 
 def get_xlsx_lines(ws):
     xlsx_lines = []
-    j = 0
+    j = -1
     ws_width = get_sheet_width(ws)
     header = get_sheet_header(ws, ws_width)
     #xlsx_lines.append(header)
     line = []
     for row in ws.rows:
-        if row[2].fill and row[2].fill.start_color.index == "FFFF0000":
-            pass
+        j += 1
+        #if j == 35:
+        #    print(row[2].fill.start_color.index)
+        if row[2].fill and row[2].fill.start_color.index == "FFDD0806":
+            continue
+            print(j)
             #print(j, end=': ')
             #for i in range(2,ws_width):
             #    print(row[i].value, end=', ')
             #print()
         elif row[2].value == None or j == 1:
-            pass
+            continue
         else:
             for i in range(2,ws_width):
                 line.append(row[i].value)
             xlsx_lines.append(line)
             line = []
-        j += 1
+        
         if j == 100:
             break
     return [header, xlsx_lines]
@@ -128,14 +132,14 @@ def get_xlsx_lines(ws):
 def read_xlsx( item_class, filename):
     wb = load_workbook(filename=filename, read_only=True)
     ws_names = wb.get_sheet_names()
-    print(ws_names)
+    #print(ws_names)
     order_list = []
     for ws_name in ws_names:
         if ws_name == 'Total Preorder':
             continue
         ws = wb[ws_name]
         tmp = get_xlsx_lines(ws)
-        print(tmp)
+        #print(tmp)
         if tmp:
             order_list.append(tmp)
     return order_list
@@ -147,9 +151,9 @@ def sheet_to_entries(sheet, ws, row):
         i = 0
         for c in l[4:]:
             if c:
-                ws['A{}'.format(j)] = str(l[0]) + "-" + str(header[i])
-                #ws['A5'] = str(c[i])
-                j += 1
+                ws['D{}'.format(row)] = str(l[0]) + "-" + str(header[i+4])
+                ws['F{}'.format(row)] = str(c)
+                row += 1
             i += 1
     return row
             
@@ -158,7 +162,7 @@ def sheet_to_entries(sheet, ws, row):
 def write_xlsx(orders):
     wb = Workbook()
     ws = wb.active
-    row = 0
+    row = 1
     for order in orders:
         row = sheet_to_entries(order, ws, row)
         #ws.append(order.to_list())
